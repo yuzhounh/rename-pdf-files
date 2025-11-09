@@ -114,7 +114,4 @@ rename_pdfs_in_place(backup=False)
 **Jing Wang**  
 Email: wangjing@xynu.edu.cn
 
----
-
 如有问题或建议，欢迎联系！
-
