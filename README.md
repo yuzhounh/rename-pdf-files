@@ -41,7 +41,22 @@ pip install PyMuPDF PyPDF2
 
 ### 使用方式
 
-#### 方式1：交互式运行（推荐）
+#### 方式1：修改代码直接运行（推荐）
+
+编辑 `rename_pdf_files.py` 文件，在文件末尾修改：
+
+```python
+# 处理当前目录，不备份
+rename_pdfs_in_place(backup=False)
+```
+
+```python
+# 或处理指定目录，启用备份
+source_directory = r"D:\Papers"  # 替换为你的PDF文件夹路径
+rename_pdfs_in_place(source_directory, backup=True)
+```
+
+#### 方式2：交互式运行
 
 直接运行脚本，按提示输入：
 
@@ -53,19 +68,6 @@ python rename_pdf_files.py
 1. 输入 PDF 文件所在目录路径（留空则使用当前目录）
 2. 选择是否需要备份（默认是）
 3. 确认后开始处理
-
-#### 方式2：修改代码直接运行
-
-编辑 `rename_pdf_files.py` 文件，在文件末尾修改：
-
-```python
-# 处理指定目录，启用备份
-source_directory = r"D:\Papers"  # 替换为你的PDF文件夹路径
-rename_pdfs_in_place(source_directory, backup=True)
-
-# 或处理当前目录，不备份
-rename_pdfs_in_place(backup=False)
-```
 
 #### 方式3：在代码中调用函数
 
@@ -101,6 +103,11 @@ rename_pdfs_in_place(backup=False)
 - 如果提取的标题为空或太短（少于3个字符），会使用默认名称"未命名论文"
 - 如果无法提取标题，文件名会保持原样或使用"无法提取标题"
 - 如果新文件名已存在，会自动添加序号，如：`标题 (1).pdf`、`标题 (2).pdf`
+- 特殊字符处理，如需自定义替换规则，可在代码中修改 `clean_filename` 函数
+- 少数 PDF 文件可能因格式问题无法自动提取标题，会在处理报告中标注，需要手动重命名
+- 仅提供了基础的标题提取和重命名功能，如有其他命名习惯，可以结合当前代码进行修改
+
+
 
 ## 联系方式
 
