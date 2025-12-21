@@ -4,11 +4,9 @@
 
 本工具可以批量提取 PDF 文件的标题，并根据提取的标题自动重命名文件。主要特性包括：
 
-1. **智能标题提取**
-   - 优先从 PDF 元数据中提取标题
-   - 通过字体大小和位置分析识别标题（通常标题字体较大且位置靠上）
-   - 从第一页文本内容中提取标题作为备选方案
-   - 自动过滤页眉、页脚、摘要等非标题内容
+1. **元数据标题提取**
+   - 从 PDF 元数据中提取标题
+   - 如果元数据中没有标题或标题太短（少于5个字符），则跳过该文件
 
 2. **文件名清理**
    - 自动移除文件名中不允许使用的特殊字符（`< > : " / \ | ? *`）
@@ -16,12 +14,8 @@
    - 限制文件名长度（最大200字符，符合 Windows 系统限制）
    - 自动处理重名文件（添加序号）
 
-3. **安全备份**
-   - 支持在处理前自动备份所有 PDF 文件到 `backup` 子目录
-   - 可选择是否启用备份功能
-
-4. **处理报告**
-   - 自动生成详细的处理报告（保存为 `处理报告.txt`）
+3. **处理报告**
+   - 自动生成详细的处理报告（保存为 `Processing_Report.txt`）
    - 记录每个文件的重命名结果和状态
 
 ## 使用方法
@@ -31,43 +25,32 @@
 - Python 3.6 或更高版本
 - 所需依赖库：
   - `PyMuPDF` (fitz)
-  - `PyPDF2`
 
 ### 安装依赖
 
 ```bash
-pip install PyMuPDF PyPDF2
+pip install PyMuPDF
 ```
 
 ### 使用方式
 
-#### 方式1：修改代码直接运行（推荐）
+#### 方式1：直接运行（默认处理当前目录）
 
-编辑 `rename_pdf_files.py` 文件，在文件末尾修改：
-
-```python
-# 处理当前目录，不备份
-rename_pdfs_in_place(backup=False)
-```
-
-```python
-# 或处理指定目录，启用备份
-source_directory = r"D:\Papers"  # 替换为你的PDF文件夹路径
-rename_pdfs_in_place(source_directory, backup=True)
-```
-
-#### 方式2：交互式运行
-
-直接运行脚本，按提示输入：
+直接运行脚本，会自动处理当前目录下的所有 PDF 文件：
 
 ```bash
 python rename_pdf_files.py
 ```
 
-运行后会提示：
-1. 输入 PDF 文件所在目录路径（留空则使用当前目录）
-2. 选择是否需要备份（默认是）
-3. 确认后开始处理
+#### 方式2：修改代码指定目录
+
+编辑 `rename_pdf_files.py` 文件，在文件末尾修改：
+
+```python
+# 处理指定目录
+source_directory = r"D:\Papers"  # 替换为你的PDF文件夹路径
+rename_pdfs_in_place(source_directory)
+```
 
 #### 方式3：在代码中调用函数
 
@@ -75,11 +58,19 @@ python rename_pdf_files.py
 from rename_pdf_files import rename_pdfs_in_place
 
 # 处理指定目录
-rename_pdfs_in_place(r"D:\Papers", backup=True)
+rename_pdfs_in_place(r"D:\Papers")
 
 # 处理当前目录
-rename_pdfs_in_place(backup=False)
+rename_pdfs_in_place()
 ```
+
+#### 方式4：使用可执行文件（推荐，无需安装Python）
+
+1. 将 `rename_pdf_files.exe` 与待重命名的 PDF 文件放在同一个目录中
+2. 双击运行 `rename_pdf_files.exe`
+3. 程序会自动处理该目录下的所有 PDF 文件
+
+**注意**：使用此方式无需安装 Python 或任何依赖库，适合不熟悉 Python 的用户使用。
 
 ### 使用示例
 
@@ -94,18 +85,17 @@ rename_pdfs_in_place(backup=False)
 
 3. **查看结果**
    - 文件会被重命名为提取的标题
-   - 如果启用了备份，原文件会保存在 `backup` 子目录中
-   - 处理报告保存在 `处理报告.txt` 文件中
+   - 处理报告保存在 `Processing_Report.txt` 文件中
 
 ### 注意事项
 
-- 建议首次使用时启用备份功能，确保数据安全
-- 如果提取的标题为空或太短（少于3个字符），会使用默认名称"未命名论文"
-- 如果无法提取标题，文件名会保持原样或使用"无法提取标题"
+- **重要**：本工具会直接重命名文件，不会创建备份。请在使用前确保重要文件已备份
+- 仅从 PDF 元数据中提取标题，如果元数据中没有标题或标题太短（少于5个字符），该文件会被跳过
+- 如果提取的标题为空或太短（少于3个字符），会使用默认名称"Untitled Paper"
+- 如果无法从元数据提取标题，文件会被跳过，不会重命名
 - 如果新文件名已存在，会自动添加序号，如：`标题 (1).pdf`、`标题 (2).pdf`
 - 特殊字符处理，如需自定义替换规则，可在代码中修改 `clean_filename` 函数
-- 少数 PDF 文件可能因格式问题无法自动提取标题，会在处理报告中标注，需要手动重命名
-- 仅提供了基础的标题提取和重命名功能，如有其他命名习惯，可以结合当前代码进行修改
+- 如果 PDF 文件的元数据中没有标题信息，该文件不会被重命名，会在处理报告中标注为"skipped (no title in metadata)"
 
 
 
