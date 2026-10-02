@@ -68,7 +68,9 @@ rename_pdfs_in_place(r"D:\Papers")
 rename_pdfs_in_place()
 ```
 
-#### 方式4：使用可执行文件（推荐，无需安装Python）
+#### 方式4：使用可执行文件（无需安装Python）
+
+当前版本 **1.1.0**，从 [GitHub Release](https://github.com/yuzhounh/rename-pdf-files/releases/tag/v1.1.0) 下载重新构建的 `rename_pdf_files.exe`。该版本包含下述 Windows 文件名修复；历史 `v1.0` 和此前下载的 EXE 不包含。
 
 1. 将 `rename_pdf_files.exe` 与待重命名的 PDF 文件放在同一个目录中
 2. 双击运行 `rename_pdf_files.exe`
@@ -99,12 +101,26 @@ rename_pdfs_in_place()
 - 如果无法从元数据提取标题，文件会被跳过，不会重命名
 - 如果新文件名已存在，会自动添加序号，如：`标题 (1).pdf`、`标题 (2).pdf`
 - 特殊字符处理，如需自定义替换规则，可在代码中修改 `clean_filename` 函数
-- 脚本还会清理控制字符、尾点与尾空格，并为 Windows 设备保留名（如 `CON`、`NUL.txt`、`LPT1`）添加前缀。仓库内的旧 EXE 尚未包含这一源码修复，使用此修复请运行 Python 脚本。
+- 脚本与 1.1.0 EXE 均清理控制字符、尾点与尾空格，并为 Windows 设备保留名（如 `CON`、`NUL.txt`、`LPT1`）添加前缀；读取元数据后关闭 PDF 句柄再重命名。
 - 如果 PDF 文件的元数据中没有标题信息，该文件不会被重命名，会在处理报告中标注为"skipped (no title in metadata)"
 
 
 
 每次生成报告都会覆盖当前目录中的 `Processing_Report.txt`；需要保留旧报告时，请先另存。
+
+1.1.0 还修复了 Windows 旧代码页或重定向输出时，日志中的箭头、特殊字符导致程序中断的问题。
+
+## 构建 Windows EXE
+
+在独立 Python 虚拟环境中安装 `requirements-build.txt`，然后在仓库根目录运行：
+
+```powershell
+python -m pip install -r requirements-build.txt
+python -m unittest discover -s tests -v
+python -m PyInstaller --noconfirm --onefile --console --icon logo.ico --version-file version_info.txt rename_pdf_files.py
+```
+
+生成文件位于 `dist/rename_pdf_files.exe`。发行版以合成 PDF 验证保留名、重名、无标题、内容保持与重复运行；不使用真实文档作测试。
 
 ## 许可证
 

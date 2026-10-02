@@ -1,6 +1,9 @@
 import fitz
 from pathlib import Path
 import re
+import sys
+
+__version__ = "1.1.0"
 
 def clean_filename(title):
     """Clean title to make it suitable as a filename"""
@@ -187,5 +190,9 @@ def generate_report(results, target_path, success_count, total_count):
                 f.write(f"   Status: {result['status']}\n")
 
 if __name__ == "__main__":
+    # Redirected Windows output may use a legacy code page; logging must not stop a rename.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(errors="backslashreplace")
     # Process current directory directly, no backup, no interaction
     rename_pdfs_in_place()
