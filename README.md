@@ -1,8 +1,18 @@
-# PDF 文件批量重命名工具
+# Rename PDF Files · PDF 批量重命名
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-D4A017.svg)](LICENSE)
+> 从 PDF 元数据提取标题，清理文件名并生成处理报告。
 
-## 主要功能
+<p>
+  <a href="https://github.com/yuzhounh/rename-pdf-files/releases/latest"><img src="https://img.shields.io/github/v/release/yuzhounh/rename-pdf-files?style=flat&amp;color=0969da&amp;label=Release" alt="Latest stable release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-f59e0b?style=flat" alt="License: MIT"></a>
+  <img src="https://img.shields.io/badge/Python-3-3776ab?style=flat&amp;logo=python&amp;logoColor=white" alt="Python: 3">
+</p>
+
+<p>
+  <a href="https://github.com/yuzhounh/rename-pdf-files/releases/latest">下载发布版</a> · <a href="#使用方法">快速开始</a> · <a href="LICENSE">开源协议</a>
+</p>
+
+## 功能特点
 
 本工具可以批量提取 PDF 文件的标题，并根据提取的标题自动重命名文件。主要特性包括：
 
@@ -122,7 +132,7 @@ python -m PyInstaller --noconfirm --onefile --console --icon logo.ico --version-
 
 生成文件位于 `dist/rename_pdf_files.exe`。发行版以合成 PDF 验证保留名、重名、无标题、内容保持与重复运行；不使用真实文档作测试。
 
-## 许可证
+## 开源协议
 
 本项目采用 [MIT 许可证](LICENSE)。
 
