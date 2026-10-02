@@ -8,6 +8,7 @@ def clean_filename(title):
     invalid_chars = ['<', '>', ':', '"', '/', '\\', '|', '?', '*']
     for char in invalid_chars:
         title = title.replace(char, ' - ')
+    title = re.sub(r'[\x00-\x1f]', ' ', title)
     
     # Replace multiple spaces with single space
     title = re.sub(r'\s+', ' ', title)
@@ -17,29 +18,35 @@ def clean_filename(title):
     title = title.replace('⠍', "-")   
     
     # Remove leading and trailing spaces
-    title = title.strip()
+    title = title.strip().rstrip('. ')
     
     # Limit filename length (Windows filename limit is 255 characters)
     if len(title) > 200:
         title = title[:200].rsplit(' ', 1)[0]  # Truncate at word boundary
+    title = title.rstrip('. ')
     
     # If title is empty or too short, use default name
     if len(title) < 3:
         title = "Untitled Paper"
+
+    # Windows reserves device names even when followed by an extension.
+    reserved = {'CON', 'PRN', 'AUX', 'NUL'} | {
+        f'{prefix}{number}' for prefix in ('COM', 'LPT') for number in '123456789¹²³'
+    }
+    if title.split('.', 1)[0].rstrip(' ').upper() in reserved:
+        title = '_' + title
     
     return title
 
 def extract_title_from_metadata(pdf_path):
     """Extract title from PDF metadata"""
     try:
-        doc = fitz.open(pdf_path)
-        metadata = doc.metadata
-        if metadata.get('title') and len(metadata['title'].strip()) > 5:
-            title = metadata['title'].strip()
-            doc.close()
-            print(f"  → Title extracted from metadata: {title[:50]}...")
-            return title
-        doc.close()
+        with fitz.open(pdf_path) as doc:
+            metadata = doc.metadata
+            if metadata.get('title') and len(metadata['title'].strip()) > 5:
+                title = metadata['title'].strip()
+                print(f"  → Title extracted from metadata: {title[:50]}...")
+                return title
     except Exception as e:
         print(f"  → Metadata extraction failed: {e}")
     
